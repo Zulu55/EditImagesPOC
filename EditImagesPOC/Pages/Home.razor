@@ -1,0 +1,59 @@
+﻿@page "/"
+
+<PageTitle>Edit Images POC</PageTitle>
+<h1>Edit Images POC</h1>
+
+<div style="position: relative; display: inline-block;">
+    <img src="images/truck.jpg" style="max-width: 400px;" />
+    @if (!string.IsNullOrWhiteSpace(OverlayText))
+    {
+        <span style="
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            background: rgba(0,0,0,0.5);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 1.2em;
+            pointer-events: none;">
+            @OverlayText
+        </span>
+    }
+</div>
+
+<br />
+
+<button class="btn btn-primary mt-2" @onclick="ShowInput">Add Text</button>
+
+@if (ShowTextInput)
+{
+    <div style="margin-top: 10px;">
+        <input @bind="InputText" placeholder="Enter text..." />
+        <button class="btn btn-success" @onclick="AddText">OK</button>
+        <button class="btn btn-danger" @onclick="Cancel">Cancel</button>
+    </div>
+}
+
+@code {
+    private bool ShowTextInput = false;
+    private string InputText = string.Empty;
+    private string OverlayText = string.Empty;
+
+    private void ShowInput()
+    {
+        ShowTextInput = true;
+        InputText = string.Empty;
+    }
+
+    private void AddText()
+    {
+        OverlayText = InputText;
+        ShowTextInput = false;
+    }
+
+    private void Cancel()
+    {
+        ShowTextInput = false;
+    }
+}
