@@ -5,13 +5,14 @@
 
 <div>
     <canvas id="imageCanvas" width="400" height="300"
-    style="border:1px solid #ccc; cursor: crosshair;"
-    @onclick="OnCanvasClick"></canvas>
+            style="border:1px solid #ccc; cursor: crosshair;"
+            @onclick="OnCanvasClick"></canvas>
 </div>
 
 <br />
 
 <button class="btn btn-primary mt-2" @onclick="ShowInput">Add Text</button>
+<button class="btn btn-secondary mt-2" @onclick="ClearCanvas">Clean</button>
 
 @if (ShowTextInput)
 {
@@ -37,6 +38,11 @@
         {
             await JS.InvokeVoidAsync("drawImageOnCanvas", "images/truck.jpg");
         }
+    }
+
+    private async Task ClearCanvas()
+    {
+        await JS.InvokeVoidAsync("drawImageOnCanvas", "images/truck.jpg");
     }
 
     private void ShowInput()
