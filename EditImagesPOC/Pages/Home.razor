@@ -13,6 +13,7 @@
 
 <button class="btn btn-primary mt-2" @onclick="ShowInput">Add Text</button>
 <button class="btn btn-secondary mt-2" @onclick="ClearCanvas">Clean</button>
+<button class="btn btn-warning mt-2" @onclick="StartRectangle">Rectangle</button>
 
 @if (ShowTextInput)
 {
@@ -29,6 +30,10 @@
     private double ClickX;
     private double ClickY;
     private bool AwaitingTextPosition = false;
+
+    private bool DrawingRectangle = false;
+    private double RectStartX, RectStartY;
+    private bool RectFirstClick = true;
 
     [Inject] IJSRuntime JS { get; set; } = null!;
 
@@ -50,9 +55,10 @@
         AwaitingTextPosition = true;
         ShowTextInput = false;
         InputText = string.Empty;
+        DrawingRectangle = false;
     }
 
-    private void OnCanvasClick(MouseEventArgs e)
+    private async void OnCanvasClick(MouseEventArgs e)
     {
         if (AwaitingTextPosition)
         {
@@ -61,6 +67,28 @@
             ShowTextInput = true;
             AwaitingTextPosition = false;
             StateHasChanged();
+        }
+        else if (DrawingRectangle)
+        {
+            if (RectFirstClick)
+            {
+                RectStartX = e.OffsetX;
+                RectStartY = e.OffsetY;
+                RectFirstClick = false;
+            }
+            else
+            {
+                double rectEndX = e.OffsetX;
+                double rectEndY = e.OffsetY;
+                double x = Math.Min(RectStartX, rectEndX);
+                double y = Math.Min(RectStartY, rectEndY);
+                double width = Math.Abs(rectEndX - RectStartX);
+                double height = Math.Abs(rectEndY - RectStartY);
+
+                await JS.InvokeVoidAsync("drawRectangleOnCanvas", x, y, width, height);
+                DrawingRectangle = false;
+                RectFirstClick = true;
+            }
         }
     }
 
@@ -77,4 +105,11 @@
         InputText = string.Empty;
     }
 
+    private void StartRectangle()
+    {
+        DrawingRectangle = true;
+        RectFirstClick = true;
+        AwaitingTextPosition = false;
+        ShowTextInput = false;
+    }
 }

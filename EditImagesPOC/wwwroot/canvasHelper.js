@@ -19,3 +19,13 @@ window.drawTextOnCanvas = (text, x, y) => {
     ctx.strokeText(text, x, y);
     ctx.fillText(text, x, y);
 };
+
+window.drawRectangleOnCanvas = (x, y, width, height) => {
+    const canvas = document.getElementById('imageCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.save();
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(x, y, width, height);
+    ctx.restore();
+};
