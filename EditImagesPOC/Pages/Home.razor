@@ -3,6 +3,8 @@
 <PageTitle>Edit Images POC</PageTitle>
 <h1>Edit Images POC</h1>
 
+<InputFile OnChange="OnImageSelected" accept="image/*" />
+
 <div>
     <canvas id="imageCanvas" width="400" height="300"
             style="border:1px solid #ccc; cursor: crosshair;"
@@ -49,6 +51,22 @@
             await JS.InvokeVoidAsync("drawImageOnCanvas", "images/truck.jpg");
         }
     }
+
+    private async Task OnImageSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file != null)
+        {
+            using var stream = file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024); // 10MB max
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            var bytes = ms.ToArray();
+            var base64 = Convert.ToBase64String(bytes);
+            var imageDataUrl = $"data:{file.ContentType};base64,{base64}";
+            await JS.InvokeVoidAsync("drawImageOnCanvas", imageDataUrl);
+        }
+    }
+
 
     private async Task ClearCanvas()
     {
