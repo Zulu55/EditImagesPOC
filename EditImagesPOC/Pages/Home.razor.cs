@@ -7,19 +7,21 @@ namespace EditImagesPOC.Pages;
 
 public partial class Home
 {
-    private bool ShowTextInput = false;
-    private string InputText = string.Empty;
-    private double ClickX;
-    private double ClickY;
-    private bool AwaitingTextPosition = false;
+    private bool showTextInput = false;
+    private string inputText = string.Empty;
+    private double clickX;
+    private double clickY;
+    private bool awaitingTextPosition = false;
 
-    private bool DrawingRectangle = false;
-    private double RectStartX, RectStartY;
-    private bool RectFirstClick = true;
+    private bool drawingRectangle = false;
+    private double rectStartX;
+    private double rectStartY;
+    private bool rectFirstClick = true;
 
-    private bool DrawingCircle = false;
-    private double CircleCenterX, CircleCenterY;
-    private bool CircleFirstClick = true;
+    private bool drawingCircle = false;
+    private double circleCenterX;
+    private double circleCenterY;
+    private bool circleFirstClick = true;
 
     [Inject] private IJSRuntime JS { get; set; } = null!;
 
@@ -58,92 +60,92 @@ public partial class Home
 
     private void ShowInput()
     {
-        AwaitingTextPosition = true;
-        ShowTextInput = false;
-        InputText = string.Empty;
-        DrawingRectangle = false;
+        awaitingTextPosition = true;
+        showTextInput = false;
+        inputText = string.Empty;
+        drawingRectangle = false;
     }
 
     private async void OnCanvasClick(MouseEventArgs e)
     {
-        if (AwaitingTextPosition)
+        if (awaitingTextPosition)
         {
-            ClickX = e.OffsetX;
-            ClickY = e.OffsetY;
-            ShowTextInput = true;
-            AwaitingTextPosition = false;
+            clickX = e.OffsetX;
+            clickY = e.OffsetY;
+            showTextInput = true;
+            awaitingTextPosition = false;
             StateHasChanged();
         }
-        else if (DrawingRectangle)
+        else if (drawingRectangle)
         {
-            if (RectFirstClick)
+            if (rectFirstClick)
             {
-                RectStartX = e.OffsetX;
-                RectStartY = e.OffsetY;
-                RectFirstClick = false;
+                rectStartX = e.OffsetX;
+                rectStartY = e.OffsetY;
+                rectFirstClick = false;
             }
             else
             {
                 double rectEndX = e.OffsetX;
                 double rectEndY = e.OffsetY;
-                double x = Math.Min(RectStartX, rectEndX);
-                double y = Math.Min(RectStartY, rectEndY);
-                double width = Math.Abs(rectEndX - RectStartX);
-                double height = Math.Abs(rectEndY - RectStartY);
+                double x = Math.Min(rectStartX, rectEndX);
+                double y = Math.Min(rectStartY, rectEndY);
+                double width = Math.Abs(rectEndX - rectStartX);
+                double height = Math.Abs(rectEndY - rectStartY);
 
                 await JS.InvokeVoidAsync("drawRectangleOnCanvas", x, y, width, height);
-                DrawingRectangle = false;
-                RectFirstClick = true;
+                drawingRectangle = false;
+                rectFirstClick = true;
             }
         }
-        else if (DrawingCircle)
+        else if (drawingCircle)
         {
-            if (CircleFirstClick)
+            if (circleFirstClick)
             {
-                CircleCenterX = e.OffsetX;
-                CircleCenterY = e.OffsetY;
-                CircleFirstClick = false;
+                circleCenterX = e.OffsetX;
+                circleCenterY = e.OffsetY;
+                circleFirstClick = false;
             }
             else
             {
-                double dx = e.OffsetX - CircleCenterX;
-                double dy = e.OffsetY - CircleCenterY;
+                double dx = e.OffsetX - circleCenterX;
+                double dy = e.OffsetY - circleCenterY;
                 double radius = Math.Sqrt(dx * dx + dy * dy);
 
-                await JS.InvokeVoidAsync("drawCircleOnCanvas", CircleCenterX, CircleCenterY, radius);
-                DrawingCircle = false;
-                CircleFirstClick = true;
+                await JS.InvokeVoidAsync("drawCircleOnCanvas", circleCenterX, circleCenterY, radius);
+                drawingCircle = false;
+                circleFirstClick = true;
             }
         }
     }
 
     private async Task AddText()
     {
-        await JS.InvokeVoidAsync("drawTextOnCanvas", InputText, ClickX, ClickY);
-        ShowTextInput = false;
-        InputText = string.Empty;
+        await JS.InvokeVoidAsync("drawTextOnCanvas", inputText, clickX, clickY);
+        showTextInput = false;
+        inputText = string.Empty;
     }
 
     private void Cancel()
     {
-        ShowTextInput = false;
-        InputText = string.Empty;
+        showTextInput = false;
+        inputText = string.Empty;
     }
 
     private void StartRectangle()
     {
-        DrawingRectangle = true;
-        RectFirstClick = true;
-        AwaitingTextPosition = false;
-        ShowTextInput = false;
+        drawingRectangle = true;
+        rectFirstClick = true;
+        awaitingTextPosition = false;
+        showTextInput = false;
     }
 
     private void StartCircle()
     {
-        DrawingCircle = true;
-        CircleFirstClick = true;
-        DrawingRectangle = false;
-        AwaitingTextPosition = false;
-        ShowTextInput = false;
+        drawingCircle = true;
+        circleFirstClick = true;
+        drawingRectangle = false;
+        awaitingTextPosition = false;
+        showTextInput = false;
     }
 }

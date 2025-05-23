@@ -19,10 +19,10 @@
 <button class="btn btn-danger mt-2" @onclick="ClearCanvas">Clean</button>
 <button class="btn btn-info mt-2" @onclick="SaveImage">Save</button>
 
-@if (ShowTextInput)
+@if (showTextInput)
 {
     <div style="margin-top: 10px;">
-        <input @bind="InputText" placeholder="Enter text..." />
+        <input @bind="inputText" placeholder="Enter text..." />
         <button class="btn btn-success" @onclick="AddText">OK</button>
         <button class="btn btn-danger" @onclick="Cancel">Cancel</button>
     </div>
