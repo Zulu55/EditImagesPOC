@@ -41,3 +41,11 @@ window.drawCircleOnCanvas = (centerX, centerY, radius) => {
     ctx.stroke();
     ctx.restore();
 };
+
+window.saveCanvasAsImage = (filename) => {
+    const canvas = document.getElementById('imageCanvas');
+    const link = document.createElement('a');
+    link.download = filename || 'edited-image.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+};
