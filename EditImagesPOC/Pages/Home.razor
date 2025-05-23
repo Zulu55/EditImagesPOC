@@ -12,8 +12,9 @@
 <br />
 
 <button class="btn btn-primary mt-2" @onclick="ShowInput">Add Text</button>
-<button class="btn btn-secondary mt-2" @onclick="ClearCanvas">Clean</button>
 <button class="btn btn-warning mt-2" @onclick="StartRectangle">Rectangle</button>
+<button class="btn btn-success mt-2" @onclick="StartCircle">Circle</button>
+<button class="btn btn-danger mt-2" @onclick="ClearCanvas">Clean</button>
 
 @if (ShowTextInput)
 {
@@ -34,6 +35,10 @@
     private bool DrawingRectangle = false;
     private double RectStartX, RectStartY;
     private bool RectFirstClick = true;
+
+    private bool DrawingCircle = false;
+    private double CircleCenterX, CircleCenterY;
+    private bool CircleFirstClick = true;
 
     [Inject] IJSRuntime JS { get; set; } = null!;
 
@@ -90,6 +95,25 @@
                 RectFirstClick = true;
             }
         }
+        else if (DrawingCircle)
+        {
+            if (CircleFirstClick)
+            {
+                CircleCenterX = e.OffsetX;
+                CircleCenterY = e.OffsetY;
+                CircleFirstClick = false;
+            }
+            else
+            {
+                double dx = e.OffsetX - CircleCenterX;
+                double dy = e.OffsetY - CircleCenterY;
+                double radius = Math.Sqrt(dx * dx + dy * dy);
+
+                await JS.InvokeVoidAsync("drawCircleOnCanvas", CircleCenterX, CircleCenterY, radius);
+                DrawingCircle = false;
+                CircleFirstClick = true;
+            }
+        }
     }
 
     private async Task AddText()
@@ -109,6 +133,15 @@
     {
         DrawingRectangle = true;
         RectFirstClick = true;
+        AwaitingTextPosition = false;
+        ShowTextInput = false;
+    }
+
+    private void StartCircle()
+    {
+        DrawingCircle = true;
+        CircleFirstClick = true;
+        DrawingRectangle = false;
         AwaitingTextPosition = false;
         ShowTextInput = false;
     }

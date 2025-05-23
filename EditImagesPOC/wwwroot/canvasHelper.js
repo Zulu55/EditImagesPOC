@@ -29,3 +29,15 @@ window.drawRectangleOnCanvas = (x, y, width, height) => {
     ctx.strokeRect(x, y, width, height);
     ctx.restore();
 };
+
+window.drawCircleOnCanvas = (centerX, centerY, radius) => {
+    const canvas = document.getElementById('imageCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.save();
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    ctx.stroke();
+    ctx.restore();
+};
